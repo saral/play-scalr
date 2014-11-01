@@ -20,28 +20,12 @@ package se.digiplant.scalr.api;
  * limitations under the License.
  */
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.Transparency;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.AreaAveragingScaleFilter;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.ColorConvertOp;
-import java.awt.image.ColorModel;
-import java.awt.image.ConvolveOp;
-import java.awt.image.ImagingOpException;
-import java.awt.image.IndexColorModel;
-import java.awt.image.Kernel;
-import java.awt.image.RasterFormatException;
-import java.awt.image.RescaleOp;
-
-import javax.imageio.ImageIO;
+import java.awt.image.*;
 
 /**
  * Class used to implement performant, high-quality and intelligent image
@@ -1617,7 +1601,10 @@ public class Resizer {
 		 * within and it will do the right thing without mangling the result.
 		 */
         if (resizeMode != Mode.FIT_EXACT) {
-            if ((ratio <= 1 && resizeMode == Mode.AUTOMATIC) || (resizeMode == Mode.FIT_TO_WIDTH)) {
+            if ((resizeMode == Mode.AUTOMATIC &&
+                 shouldAutomaticFitWidth(currentWidth, currentHeight, targetWidth, targetHeight)
+                )
+                || resizeMode == Mode.FIT_TO_WIDTH ) {
                 // First make sure we need to do any work in the first place
                 if (targetWidth == currentWidth)
                     return src;
@@ -1771,6 +1758,10 @@ public class Resizer {
 
         return result;
     }
+
+	public static boolean shouldAutomaticFitWidth(int currentWidth, int currentHeight, int targetWidth, int targetHeight) {
+		return ((float) targetHeight / currentHeight * currentWidth) > targetWidth;
+	}
 
     /**
      * Used to apply a {@link Rotation} and then <code>0</code> or more

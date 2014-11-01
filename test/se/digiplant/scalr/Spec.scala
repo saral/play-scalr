@@ -41,4 +41,6 @@ trait TempFile extends Scope {
     FileUtils.copyFile(logo, tmpFile)
     tmpFile
   }
+
+
 }

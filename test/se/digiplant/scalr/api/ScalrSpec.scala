@@ -29,5 +29,31 @@ object ScalrSpec extends Specification {
       buf.getHeight must beEqualTo(50)
     }
 
+    "automatic resize fits height" in new ScalrContext {
+      val test = new File("test/resources/landscape.png")
+
+      val resized = Scalr.resize(test, 400, 150)
+      resized.exists() must beTrue
+
+      val in = new FileInputStream(resized)
+      val buf = ImageIO.read(in)
+      IOUtils.closeQuietly(in)
+      buf.getWidth must beEqualTo(259)
+      buf.getHeight must beEqualTo(150)
+    }
+
+    "automatic resize fits width" in new ScalrContext {
+      val test = new File("test/resources/landscape.png")
+
+      val resized = Scalr.resize(test, 200, 200)
+      resized.exists() must beTrue
+
+      val in = new FileInputStream(resized)
+      val buf = ImageIO.read(in)
+      IOUtils.closeQuietly(in)
+      buf.getWidth must beEqualTo(200)
+      buf.getHeight must beEqualTo(116)
+    }
+
   }
 }
